@@ -22,16 +22,24 @@ const GridItemComponent = ({ parentCallBack, node }) => {
   const [backgroundColor, setBackgroundColor] = useState('white');
   const { isMouseDown } = MouseClickState.get();
   const changeBackground = () => {
-    if (node.nodeValue === NODE_STATES.EMPTY) {
-      setBackgroundColor('white');
-    } else if (node.nodeValue === NODE_STATES.FILLED) {
-      setBackgroundColor('black');
-    } else if (node.nodeValue === NODE_STATES.SLOW) {
-      setBackgroundColor('brown');
-    } else if (node.nodeValue === NODE_STATES.START) {
-      setBackgroundColor('green');
-    } else if (node.nodeValue === NODE_STATES.END) {
-      setBackgroundColor('blue');
+    switch (node.nodeValue) {
+      case NODE_STATES.EMPTY:
+        setBackgroundColor('white');
+        break;
+      case NODE_STATES.FILLED:
+        setBackgroundColor('black');
+        break;
+      case NODE_STATES.SLOW:
+        setBackgroundColor('brown');
+        break;
+      case NODE_STATES.START:
+        setBackgroundColor('green');
+        break;
+      case NODE_STATES.END:
+        setBackgroundColor('blue');
+        break;
+      default:
+        break;
     }
   };
 

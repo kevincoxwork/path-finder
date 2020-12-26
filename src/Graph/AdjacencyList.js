@@ -6,6 +6,8 @@ class AdjacencyList {
   constructor(sizeOfGridx, sizeOfGridy) {
     this.sizeOfGridy = sizeOfGridy;
     this.sizeOfGridx = sizeOfGridx;
+    this.startingNodeLocation = null;
+    this.endingNodeLocation = null;
     this.adjacencyList = new Map();
   }
 
@@ -14,13 +16,11 @@ class AdjacencyList {
   // }
 
   addEdgeByID(startingNodeID, nodeEndID, weight) {
-    try {
-      const startingNode = this.adjacencyList.get(startingNodeID).node;
-      const endingNode = this.adjacencyList.get(nodeEndID).node;
-      this.adjacencyList.get(startingNodeID).edgeList.push(new Edge(startingNode, endingNode, weight));
-    } catch (ex) {
-      console.log(ex);
-    }
+    const startingNode = this.adjacencyList.get(startingNodeID).node;
+    const endingNode = this.adjacencyList.get(nodeEndID).node;
+    this.adjacencyList
+      .get(startingNodeID)
+      .edgeList.push(new Edge(startingNode, endingNode, weight));
   }
 
   // removeEdge(startingNode, nodeEnd) {
@@ -31,14 +31,21 @@ class AdjacencyList {
     // remove reference in other nodes
     const otherNodes = this.adjacencyList.get(nodeID).edgeList;
     otherNodes.forEach((node) => {
-      const currentNodeEdgeList = this.adjacencyList.get(node.nodeEnd.nodeKey);
+      const currentNodeEdgeList = this.adjacencyList.get(
+        node.nodeEnd.nodeKey,
+      );
       // for (let i = 0; i < currentNodeEdgeList.length; i += 1) {
       //   if (currentNodeEdgeList[i].nodeEnd.nodeKey === nodeID) {
       //     currentNodeEdgeList.remove(i);
       //   }
       // }
-      currentNodeEdgeList.edgeList = currentNodeEdgeList.edgeList.filter((currentNode) => currentNode.nodeEnd.nodeKey !== nodeID);
-      this.adjacencyList.set(node.nodeEnd.nodeKey, currentNodeEdgeList);
+      currentNodeEdgeList.edgeList = currentNodeEdgeList.edgeList.filter(
+        (currentNode) => currentNode.nodeEnd.nodeKey !== nodeID,
+      );
+      this.adjacencyList.set(
+        node.nodeEnd.nodeKey,
+        currentNodeEdgeList,
+      );
     });
     // remove reference in this node instance
     const nodeInfo = this.adjacencyList.get(nodeID);
@@ -48,13 +55,45 @@ class AdjacencyList {
   }
 
   changeNodeType(nodeID, nodeType) {
+    if (nodeType === NODE_STATES.START) {
+      if (this.isStartingNodeDefined()) {
+        this.changeNodeType(
+          this.startingNodeLocation,
+          NODE_STATES.EMPTY,
+        );
+      }
+      this.startingNodeLocation = nodeID;
+    } else if (nodeType === NODE_STATES.END) {
+      if (this.isEndingNodeDefined()) {
+        this.changeNodeType(
+          this.endingNodeLocation,
+          NODE_STATES.EMPTY,
+        );
+      }
+      this.endingNodeLocation = nodeID;
+    }
     const nodeInfo = this.adjacencyList.get(nodeID);
     nodeInfo.node.nodeValue = nodeType;
     this.adjacencyList.set(nodeID, nodeInfo);
   }
 
+  getNodeById(nodeID) {
+    return this.adjacencyList.get(nodeID).node;
+  }
+
+  isStartingNodeDefined() {
+    return this.startingNodeLocation !== null;
+  }
+
+  isEndingNodeDefined() {
+    return this.endingNodeLocation !== null;
+  }
+
   addNode(nodeKey, nodeValue, x, y) {
-    this.adjacencyList.set(nodeKey, { node: new Node(nodeKey, nodeValue, x, y), edgeList: [] });
+    this.adjacencyList.set(nodeKey, {
+      node: new Node(nodeKey, nodeValue, x, y),
+      edgeList: [],
+    });
   }
 
   buildEmptyGrid() {
@@ -79,10 +118,18 @@ class AdjacencyList {
         }
         // Handle y
         if (y > 0) {
-          this.addEdgeByID(i, i - this.sizeOfGridx, NODE_STATES.EMPTY);
+          this.addEdgeByID(
+            i,
+            i - this.sizeOfGridx,
+            NODE_STATES.EMPTY,
+          );
         }
         if (y + 1 < this.sizeOfGridy) {
-          this.addEdgeByID(i, i + this.sizeOfGridx, NODE_STATES.EMPTY);
+          this.addEdgeByID(
+            i,
+            i + this.sizeOfGridx,
+            NODE_STATES.EMPTY,
+          );
         }
         i += 1;
       }

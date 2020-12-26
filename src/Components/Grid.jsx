@@ -17,10 +17,10 @@ const OuterGrid = styled.div`
 const GridComponent = () => {
   const { setMouseState } = MouseClickState.get();
   const { adjacencyList } = GridState.get();
+
   const [grid, setGrid] = useState([]);
   const parentCallBack = (node) => {
     const { mouseType } = MouseClickState.get();
-    console.log(`Grid ID is ${node.nodeKey} ${node.nodeValue}`);
     if (mouseType === NODE_STATES.FILLED) {
       adjacencyList.removeEdgeByID(node.nodeKey);
     } else {
