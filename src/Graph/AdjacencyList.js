@@ -1,3 +1,6 @@
+import {
+  makeObservable, action, observable,
+} from 'mobx';
 import Edge from './Edge';
 import Node from './Node';
 import NODE_STATES from './NODE_STATES';
@@ -9,6 +12,15 @@ class AdjacencyList {
     this.startingNodeLocation = null;
     this.endingNodeLocation = null;
     this.adjacencyList = new Map();
+    makeObservable(this, {
+      adjacencyList: observable,
+      addEdgeByID: action,
+      removeEdgeByID: action,
+      changeNodeType: action,
+      addNode: action,
+      buildEmptyGrid: action,
+    });
+    this.buildEmptyGrid();
   }
 
   // addEdge(startingNode, nodeEnd, weight) {

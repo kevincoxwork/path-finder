@@ -1,9 +1,8 @@
-import React, { useState } from 'react';
+import React from 'react';
 import styled from 'styled-components';
 import PropTypes from 'prop-types';
 import { observer } from 'mobx-react';
 import NODE_STATES from '../Graph/NODE_STATES';
-import MouseClickState from '../state/mouseClickState';
 
 const NoSelect = styled.div`
   -webkit-touch-callout: none; /* iOS Safari */
@@ -18,43 +17,33 @@ const NoSelect = styled.div`
   outline: 1px solid black;
 `;
 
+// eslint-disable-next-line react/prop-types
 const GridItemComponent = ({ parentCallBack, node }) => {
-  const [backgroundColor, setBackgroundColor] = useState('white');
-  const { isMouseDown } = MouseClickState.get();
   const changeBackground = () => {
     switch (node.nodeValue) {
       case NODE_STATES.EMPTY:
-        setBackgroundColor('white');
-        break;
+        return 'white';
       case NODE_STATES.FILLED:
-        setBackgroundColor('black');
-        break;
+        return 'black';
       case NODE_STATES.SLOW:
-        setBackgroundColor('brown');
-        break;
+        return 'brown';
       case NODE_STATES.START:
-        setBackgroundColor('green');
-        break;
+        return 'green';
       case NODE_STATES.END:
-        setBackgroundColor('blue');
-        break;
+        return 'blue';
       default:
-        break;
+        return 'white';
     }
   };
 
   return (
     <NoSelect
-      style={{ background: `${backgroundColor}` }}
+      style={{ background: `${changeBackground(node)}` }}
       onMouseEnter={() => {
-        if (isMouseDown) {
-          parentCallBack(node);
-          changeBackground();
-        }
+        parentCallBack(node);
       }}
       onMouseDown={() => {
         parentCallBack(node);
-        changeBackground();
       }}
       role="button"
       aria-hidden="true"
