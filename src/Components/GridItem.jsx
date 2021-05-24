@@ -14,7 +14,8 @@ const NoSelect = styled.div`
                                   supported by Chrome, Edge, Opera and Firefox */
   height: 25px;
   width: 25px;
-  outline: 1px solid black;
+  border-radius: 5px;
+  padding: 1px;
 `;
 
 // eslint-disable-next-line react/prop-types
@@ -22,17 +23,19 @@ const GridItemComponent = ({ parentCallBack, node }) => {
   const changeBackground = () => {
     switch (node.nodeValue) {
       case NODE_STATES.EMPTY:
-        return 'white';
+        return '#FCD5CE';
       case NODE_STATES.FILLED:
-        return 'black';
+        return '#3A3238';
       case NODE_STATES.SLOW:
-        return 'brown';
+        return '#b08968';
       case NODE_STATES.START:
-        return 'green';
+        return '#58BC82';
       case NODE_STATES.END:
-        return 'blue';
+        return '#F05365 ';
+      case NODE_STATES.PATH:
+        return '#E8B4BC';
       default:
-        return 'white';
+        return '#FFCF9C';
     }
   };
 

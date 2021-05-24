@@ -8,10 +8,13 @@ import MouseClickState from '../state/mouseClickState';
 import NODE_STATES from '../Graph/NODE_STATES';
 
 const OuterGrid = styled.div` 
-  display: grid;
-  grid-template-columns: repeat(${25}, 0fr);
-  column-gap: 1px;
+  display: inline-grid;
+  grid-template-columns: repeat(${15}, 0fr);
+  column-gap: 2px;
+  row-gap: 2px;
   padding: 0px;
+  outline: auto;
+  background-color: white;
 `;
 
 const GridComponent = ({ adjacencyList }) => {

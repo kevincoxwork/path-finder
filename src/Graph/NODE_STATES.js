@@ -4,5 +4,6 @@ const NODE_STATES = {
   SLOW: 2,
   START: 3,
   END: 4,
+  PATH: 5,
 };
 export default NODE_STATES;

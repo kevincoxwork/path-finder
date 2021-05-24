@@ -6,6 +6,8 @@ class Node {
     this.nodeValue = nodeValue;
     this.xValue = xValue;
     this.yValue = yValue;
+    this.isMarked = false;
+    this.distance = Number.MAX_SAFE_INTEGER;
     makeAutoObservable(this);
   }
 }

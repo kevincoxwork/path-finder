@@ -17,6 +17,12 @@ export default class MouseClickState {
     this.isMouseDown = state;
   };
 
+  setMouseType = (state) => {
+    this.mouseType = state;
+  }
+
+  getMouseType = () => this.mouseType;
+
   cycleMouseType = () => {
     this.mouseType += 1;
     if (this.mouseType > NODE_STATES.END) {
