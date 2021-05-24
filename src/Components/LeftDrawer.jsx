@@ -1,5 +1,5 @@
 /* eslint-disable react/prop-types */
-import React from 'react';
+import React, { useState } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import Drawer from '@material-ui/core/Drawer';
 import CssBaseline from '@material-ui/core/CssBaseline';
@@ -11,7 +11,10 @@ import Divider from '@material-ui/core/Divider';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
-import InboxIcon from '@material-ui/icons/MoveToInbox';
+import ClearIcon from '@material-ui/icons/Clear';
+import InfoIcon from '@material-ui/icons/Info';
+import Snackbar from '@material-ui/core/Snackbar';
+import MuiAlert from '@material-ui/lab/Alert';
 import styled from 'styled-components';
 import { observer } from 'mobx-react';
 import NODE_STATES from '../Graph/NODE_STATES';
@@ -58,32 +61,84 @@ const Tile = styled.div`
 
 const LeftDrawer = ({ adjacencyList }) => {
   const classes = useStyles();
+  const [snackbarInfo, setSnackbarInfo] = useState({
+    open: false,
+    message: '',
+    severity: 'success',
+  });
   const { getMouseType, setMouseType } = MouseClickState.get();
 
-  const solveMaze = (algorithm) => {
+  const solveMaze = async (algorithm) => {
     const mazeSolver = new MazeSolver();
     if (!adjacencyList.startingNodeLocation) {
-      console.log('bad');
+      setSnackbarInfo({
+        open: true,
+        message:
+          'Starting Node Not Set - Please Add A Starting Note 🌟',
+        severity: 'error',
+      });
+      return;
     }
     if (!adjacencyList.endingNodeLocation) {
-      console.log('bad');
+      setSnackbarInfo({
+        open: true,
+        message: 'Ending Node Not Set - Please Add An Ending Note 🌟',
+        severity: 'error',
+      });
+      return;
     }
-    const startingNode = adjacencyList.getNodeById(adjacencyList.startingNodeLocation);
-    const endingNode = adjacencyList.getNodeById(adjacencyList.endingNodeLocation);
-    let result = null;
+    const startingNode = adjacencyList.getNodeById(
+      adjacencyList.startingNodeLocation,
+    );
+    const endingNode = adjacencyList.getNodeById(
+      adjacencyList.endingNodeLocation,
+    );
+    const result = { completePath: null, searchPath: null };
     switch (algorithm) {
       case 1:
-        result = mazeSolver.solveFirstPath(adjacencyList, startingNode, endingNode);
+        // eslint-disable-next-line no-case-declarations
+        const dfsResult = mazeSolver.solveDFS(
+          adjacencyList,
+          startingNode,
+          endingNode,
+        );
+        result.completePath = dfsResult;
         break;
       case 2:
-        result = mazeSolver.solveDijkstraBlind(adjacencyList, startingNode, endingNode);
+        // eslint-disable-next-line no-case-declarations
+        const { completePath, searchPath } = mazeSolver.solveDijkstra(
+          adjacencyList,
+          startingNode,
+          endingNode,
+        );
+        result.completePath = completePath;
+        result.searchPath = searchPath;
         break;
       default:
     }
-    if (result === null) {
-      console.log('No Path Exists');
+    if (result.searchPath !== null) {
+      await adjacencyList.drawLine(
+        result.searchPath,
+        NODE_STATES.SEARCH,
+      );
     }
-    adjacencyList.drawLine(result);
+    if (result.completePath.length === 0) {
+      setSnackbarInfo({
+        open: true,
+        message: 'No Path Found From Starting Node To Ending Node 💔',
+        severity: 'error',
+      });
+      return;
+    }
+    await adjacencyList.drawLine(
+      result.completePath,
+      NODE_STATES.PATH,
+    );
+    setSnackbarInfo({
+      open: true,
+      message: 'Path Found! 🎉',
+      severity: 'success',
+    });
   };
 
   return (
@@ -107,25 +162,45 @@ const LeftDrawer = ({ adjacencyList }) => {
         <div className={classes.toolbar} />
         <Divider />
         <List>
-          <ListItem button key="Start" selected={getMouseType() === NODE_STATES.START} onClick={() => setMouseType(NODE_STATES.START)}>
+          <ListItem
+            button
+            key="Start"
+            selected={getMouseType() === NODE_STATES.START}
+            onClick={() => setMouseType(NODE_STATES.START)}
+          >
             <ListItemIcon>
               <Tile style={{ backgroundColor: '#58BC82' }} />
             </ListItemIcon>
             <ListItemText primary="Starting Tile" />
           </ListItem>
-          <ListItem button key="End" selected={getMouseType() === NODE_STATES.END} onClick={() => setMouseType(NODE_STATES.END)}>
+          <ListItem
+            button
+            key="End"
+            selected={getMouseType() === NODE_STATES.END}
+            onClick={() => setMouseType(NODE_STATES.END)}
+          >
             <ListItemIcon>
               <Tile style={{ backgroundColor: '#F05365' }} />
             </ListItemIcon>
             <ListItemText primary="Ending Tile" />
           </ListItem>
-          <ListItem button key="Barrier" selected={getMouseType() === NODE_STATES.FILLED} onClick={() => setMouseType(NODE_STATES.FILLED)}>
+          <ListItem
+            button
+            key="Barrier"
+            selected={getMouseType() === NODE_STATES.FILLED}
+            onClick={() => setMouseType(NODE_STATES.FILLED)}
+          >
             <ListItemIcon>
               <Tile style={{ backgroundColor: '#3A3238' }} />
             </ListItemIcon>
             <ListItemText primary="Barrier Tile" />
           </ListItem>
-          <ListItem button key="Eraser" selected={getMouseType() === NODE_STATES.EMPTY} onClick={() => setMouseType(NODE_STATES.EMPTY)}>
+          <ListItem
+            button
+            key="Eraser"
+            selected={getMouseType() === NODE_STATES.EMPTY}
+            onClick={() => setMouseType(NODE_STATES.EMPTY)}
+          >
             <ListItemIcon>
               <Tile style={{ backgroundColor: '#FCD5CE' }} />
             </ListItemIcon>
@@ -134,9 +209,13 @@ const LeftDrawer = ({ adjacencyList }) => {
         </List>
         <Divider />
         <List>
-          <ListItem button key="Clear" onClick={() => adjacencyList.buildEmptyGrid()}>
+          <ListItem
+            button
+            key="Clear"
+            onClick={() => adjacencyList.buildEmptyGrid()}
+          >
             <ListItemIcon>
-              <InboxIcon />
+              <ClearIcon />
             </ListItemIcon>
             <ListItemText primary="Clear Maze" />
           </ListItem>
@@ -145,31 +224,54 @@ const LeftDrawer = ({ adjacencyList }) => {
         <List>
           <ListItem button key="DFS" onClick={() => solveMaze(1)}>
             <ListItemIcon>
-              <InboxIcon />
+              <p>DFS</p>
             </ListItemIcon>
             <ListItemText primary="Perform DFS" />
           </ListItem>
           <ListItem button key="BFS" onClick={() => solveMaze(1)}>
             <ListItemIcon>
-              <InboxIcon />
+              <p>BFS</p>
             </ListItemIcon>
             <ListItemText primary="Perform BFS" />
           </ListItem>
-          <ListItem button key="Dijkstra" onClick={() => solveMaze(2)}>
+          <ListItem
+            button
+            key="Dijkstra"
+            onClick={() => solveMaze(2)}
+          >
             <ListItemIcon>
-              <InboxIcon />
+              <p>SP</p>
             </ListItemIcon>
             <ListItemText primary="Perform Dijkstra" />
           </ListItem>
         </List>
         <Divider />
-        <ListItem button key="About" onClick={() => setMouseType(NODE_STATES.EMPTY)}>
+        <ListItem
+          button
+          key="About"
+          onClick={() => setMouseType(NODE_STATES.EMPTY)}
+        >
           <ListItemIcon>
-            <InboxIcon />
+            <InfoIcon />
           </ListItemIcon>
           <ListItemText primary="About Me" />
         </ListItem>
       </Drawer>
+      <Snackbar
+        open={
+         snackbarInfo.open
+        }
+        autoHideDuration={6000}
+        onClose={() => setSnackbarInfo({
+          open: false,
+          message: '',
+          severity: 'success',
+        })}
+      >
+        <MuiAlert elevation={6} severity={snackbarInfo.severity}>
+          {snackbarInfo.message}
+        </MuiAlert>
+      </Snackbar>
     </div>
   );
 };

@@ -33,7 +33,9 @@ const GridItemComponent = ({ parentCallBack, node }) => {
       case NODE_STATES.END:
         return '#F05365 ';
       case NODE_STATES.PATH:
-        return '#E8B4BC';
+        return '#b7b7a4';
+      case NODE_STATES.SEARCH:
+        return '#fec89a';
       default:
         return '#FFCF9C';
     }
@@ -43,10 +45,13 @@ const GridItemComponent = ({ parentCallBack, node }) => {
     <NoSelect
       style={{ background: `${changeBackground(node)}` }}
       onMouseEnter={() => {
-        parentCallBack(node);
+        parentCallBack(node, false);
       }}
       onMouseDown={() => {
-        parentCallBack(node);
+        parentCallBack(node, true);
+      }}
+      onMouseClick={() => {
+        parentCallBack(node, true);
       }}
       role="button"
       aria-hidden="true"

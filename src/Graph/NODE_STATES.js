@@ -5,5 +5,6 @@ const NODE_STATES = {
   START: 3,
   END: 4,
   PATH: 5,
+  SEARCH: 6,
 };
 export default NODE_STATES;

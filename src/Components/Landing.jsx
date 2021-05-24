@@ -10,9 +10,9 @@ import AdjacencyList from '../Graph/AdjacencyList';
 const CenetedDiv = styled.div`
   position: absolute;
   left: 50%;
-  top: 50%;
-  -webkit-transform: translate(-50%, -50%);
-  transform: translate(-50%, -50%);
+  top: 47%;
+  -webkit-transform: translate(-30%, -50%);
+  transform: translate(-30%, -50%);
   text-align: center;
 `;
 

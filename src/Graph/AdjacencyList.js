@@ -128,17 +128,25 @@ class AdjacencyList {
   }
 
   // eslint-disable-next-line class-methods-use-this
-  async drawLine(pathToDraw) {
+  async drawLine(pathToDraw, state) {
     let timeout = 50;
     if (pathToDraw.length > 50) {
       timeout = 25;
     }
     // eslint-disable-next-line no-restricted-syntax
     for (const node of pathToDraw) {
-      this.changeNodeType(node.nodeKey, NODE_STATES.PATH);
+      this.changeNodeType(node.nodeKey, state);
       // eslint-disable-next-line no-await-in-loop
       await new Promise((r) => setTimeout(r, timeout));
     }
+  }
+
+  addNodePredecessor(node1, node2) {
+    this.getNodeById(node1.nodeKey).setPredecessor(node2);
+  }
+
+  updateNodeDistance(nodeID, distance) {
+    this.getNodeById(nodeID).setDistance(distance);
   }
 
   buildEmptyGrid() {

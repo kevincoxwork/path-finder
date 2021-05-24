@@ -21,9 +21,9 @@ const GridComponent = ({ adjacencyList }) => {
   const { setMouseState } = MouseClickState.get();
 
   const [grid, setGrid] = useState([]);
-  const parentCallBack = (node) => {
+  const parentCallBack = (node, isSingleClicked) => {
     const { mouseType, isMouseDown } = MouseClickState.get();
-    if (!isMouseDown) {
+    if (!isMouseDown && !isSingleClicked) {
       return;
     }
     if (mouseType === NODE_STATES.FILLED) {

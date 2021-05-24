@@ -17,7 +17,7 @@ class MazeSolver {
     this.pathStack = [];
   }
 
-  doesFirstPathExist(graph, startingNode, endingNode) {
+  doesDFSExist(graph, startingNode, endingNode) {
     graph.markNodeById(startingNode.nodeKey);
     this.pathStack.push(startingNode);
     if (startingNode.nodeKey === endingNode.nodeKey) return true;
@@ -25,7 +25,7 @@ class MazeSolver {
     // eslint-disable-next-line no-restricted-syntax
     for (const edge of graph.getIncidentEdgesbyId(startingNode.nodeKey)) {
       if (!edge.nodeEnd.isMarked) {
-        if (this.doesFirstPathExist(graph, edge.nodeEnd, endingNode)) {
+        if (this.doesDFSExist(graph, edge.nodeEnd, endingNode)) {
           return true;
         }
       }
@@ -37,8 +37,8 @@ class MazeSolver {
     return false;
   }
 
-  solveFirstPath(graph, startingNode, endingNode) {
-    if (!this.doesFirstPathExist(graph, startingNode, endingNode)) {
+  solveDFS(graph, startingNode, endingNode) {
+    if (!this.doesDFSExist(graph, startingNode, endingNode)) {
       graph.clearMarkings();
       return null;
     }
@@ -65,30 +65,35 @@ class MazeSolver {
     return closestReachableNode;
   }
 
-  solveDijkstraBlind(graph, startingNode, endingNode) {
+  solveDijkstra(graph, startingNode, endingNode) {
+    const searchPath = [];
     // eslint-disable-next-line no-param-reassign
     startingNode.distance = 0;
+    graph.updateNodeDistance(startingNode.nodeKey, 0);
     const priorityQueue = new PriorityQueue();
     priorityQueue.enq(startingNode);
     graph.markNodeById(startingNode.nodeKey);
     while (!priorityQueue.isEmpty()) {
       const currentNode = priorityQueue.deq();
-      for (const edge of graph.getIncidentEdgesbyId(startingNode.nodeKey)) {
+      for (const edge of graph.getIncidentEdgesbyId(currentNode.nodeKey)) {
         const node = edge.nodeEnd;
         if (!node.isMarked) {
           const newDistance = currentNode.distance + edge.weight;
           if (newDistance < node.distance) {
             // eslint-disable-next-line no-underscore-dangle
             removeItemOnce(priorityQueue._elements, node);
+            graph.addNodePredecessor(node, currentNode);
+            graph.updateNodeDistance(node.nodeKey, newDistance);
             node.distance = newDistance;
             node.predecessor = currentNode;
             priorityQueue.enq(node);
+            if (node.nodeKey !== endingNode.nodeKey) searchPath.push(node);
           }
         }
       }
       graph.markNodeById(currentNode.nodeKey);
     }
-    return this.getShortestPathTo(graph.getNodeById(endingNode.nodeKey));
+    return { completePath: this.getShortestPathTo(graph.getNodeById(endingNode.nodeKey)), searchPath };
   }
 
   getShortestPathTo(endingNode) {
@@ -99,6 +104,7 @@ class MazeSolver {
       currentNode = currentNode.predecessor;
     }
     path = path.reverse();
+    path.pop();
     return path;
   }
 }
