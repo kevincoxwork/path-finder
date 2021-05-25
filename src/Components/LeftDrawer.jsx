@@ -15,8 +15,8 @@ import ClearIcon from '@material-ui/icons/Clear';
 import InfoIcon from '@material-ui/icons/Info';
 import Snackbar from '@material-ui/core/Snackbar';
 import MuiAlert from '@material-ui/lab/Alert';
-import styled from 'styled-components';
 import { observer } from 'mobx-react';
+import Tile from './Tile';
 import NODE_STATES from '../Graph/NODE_STATES';
 import MazeSolver from '../Graph/Solver';
 import MouseClickState from '../state/mouseClickState';
@@ -44,20 +44,6 @@ const useStyles = makeStyles((theme) => ({
     padding: theme.spacing(3),
   },
 }));
-
-const Tile = styled.div`
-  -webkit-touch-callout: none; /* iOS Safari */
-  -webkit-user-select: none; /* Safari */
-  -khtml-user-select: none; /* Konqueror HTML */
-  -moz-user-select: none; /* Old versions of Firefox */
-  -ms-user-select: none; /* Internet Explorer/Edge */
-  user-select: none; /* Non-prefixed version, currently
-                                  supported by Chrome, Edge, Opera and Firefox */
-  height: 25px;
-  width: 25px;
-  border-radius: 5px;
-  padding: 1px;
-`;
 
 const LeftDrawer = ({ adjacencyList }) => {
   const classes = useStyles();

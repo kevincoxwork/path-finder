@@ -1,22 +1,8 @@
 import React from 'react';
-import styled from 'styled-components';
 import PropTypes from 'prop-types';
 import { observer } from 'mobx-react';
 import NODE_STATES from '../Graph/NODE_STATES';
-
-const NoSelect = styled.div`
-  -webkit-touch-callout: none; /* iOS Safari */
-  -webkit-user-select: none; /* Safari */
-  -khtml-user-select: none; /* Konqueror HTML */
-  -moz-user-select: none; /* Old versions of Firefox */
-  -ms-user-select: none; /* Internet Explorer/Edge */
-  user-select: none; /* Non-prefixed version, currently
-                                  supported by Chrome, Edge, Opera and Firefox */
-  height: 25px;
-  width: 25px;
-  border-radius: 5px;
-  padding: 1px;
-`;
+import Tile from './Tile';
 
 // eslint-disable-next-line react/prop-types
 const GridItemComponent = ({ parentCallBack, node }) => {
@@ -42,7 +28,7 @@ const GridItemComponent = ({ parentCallBack, node }) => {
   };
 
   return (
-    <NoSelect
+    <Tile
       style={{ background: `${changeBackground(node)}` }}
       onMouseEnter={() => {
         parentCallBack(node, false);
