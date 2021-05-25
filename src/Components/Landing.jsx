@@ -3,7 +3,6 @@ import { observer } from 'mobx-react';
 import styled from 'styled-components';
 // import PropTypes from 'prop-types';
 import GridComponent from './Grid';
-import PaletteComponent from './Palette';
 import LeftDrawer from './LeftDrawer';
 import AdjacencyList from '../Graph/AdjacencyList';
 
@@ -22,7 +21,6 @@ const LandingComponent = () => {
     <>
       <CenetedDiv>
         <GridComponent adjacencyList={adjacencyList} />
-        <PaletteComponent adjacencyList={adjacencyList} />
       </CenetedDiv>
       <LeftDrawer adjacencyList={adjacencyList} />
     </>

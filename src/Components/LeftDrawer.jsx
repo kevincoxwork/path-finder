@@ -114,6 +114,15 @@ const LeftDrawer = ({ adjacencyList }) => {
         result.completePath = completePath;
         result.searchPath = searchPath;
         break;
+      case 3:
+        // eslint-disable-next-line no-case-declarations
+        const bfsResult = mazeSolver.solveBFS(
+          adjacencyList,
+          startingNode,
+          endingNode,
+        );
+        result.completePath = bfsResult;
+        break;
       default:
     }
     if (result.searchPath !== null) {
@@ -147,7 +156,7 @@ const LeftDrawer = ({ adjacencyList }) => {
       <AppBar position="fixed" className={classes.appBar}>
         <Toolbar style={{ backgroundColor: '#f5b2a6' }}>
           <Typography variant="h6" noWrap>
-            Kevin Cox - Mazer Solver
+            Kevin Cox - Maze Solver
           </Typography>
         </Toolbar>
       </AppBar>
@@ -212,7 +221,7 @@ const LeftDrawer = ({ adjacencyList }) => {
           <ListItem
             button
             key="Clear"
-            onClick={() => adjacencyList.buildEmptyGrid()}
+            onClick={() => window.location.reload()}
           >
             <ListItemIcon>
               <ClearIcon />
@@ -228,7 +237,7 @@ const LeftDrawer = ({ adjacencyList }) => {
             </ListItemIcon>
             <ListItemText primary="Perform DFS" />
           </ListItem>
-          <ListItem button key="BFS" onClick={() => solveMaze(1)}>
+          <ListItem button key="BFS" onClick={() => solveMaze(3)}>
             <ListItemIcon>
               <p>BFS</p>
             </ListItemIcon>
@@ -246,16 +255,17 @@ const LeftDrawer = ({ adjacencyList }) => {
           </ListItem>
         </List>
         <Divider />
-        <ListItem
-          button
-          key="About"
-          onClick={() => setMouseType(NODE_STATES.EMPTY)}
-        >
-          <ListItemIcon>
-            <InfoIcon />
-          </ListItemIcon>
-          <ListItemText primary="About Me" />
-        </ListItem>
+        <a href="/" style={{ textDecoration: 'none', color: 'black' }}>
+          <ListItem
+            button
+            key="About"
+          >
+            <ListItemIcon>
+              <InfoIcon />
+            </ListItemIcon>
+            <ListItemText primary="About Me" />
+          </ListItem>
+        </a>
       </Drawer>
       <Snackbar
         open={

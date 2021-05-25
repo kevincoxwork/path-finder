@@ -31,8 +31,8 @@ class MazeSolver {
       }
     }
 
-    // Un-mark the node, we might need to traverse with this node again
-    graph.unmarkNodeById(startingNode.nodeKey);
+    // // Un-mark the node, we might need to traverse with this node again
+    // graph.unmarkNodeById(startingNode.nodeKey);
     this.pathStack.pop();
     return false;
   }
@@ -40,13 +40,36 @@ class MazeSolver {
   solveDFS(graph, startingNode, endingNode) {
     if (!this.doesDFSExist(graph, startingNode, endingNode)) {
       graph.clearMarkings();
-      return null;
+      return [];
     }
     graph.clearMarkings();
     // remove first & last element
     this.pathStack.pop();
     this.pathStack.shift();
     return this.pathStack;
+  }
+
+  solveBFS(graph, startingNode, endingNode) {
+    const completePath = [];
+    graph.markNodeById(startingNode.nodeKey);
+
+    const queue = [];
+    queue.push(startingNode);
+    while (queue.length > 0) {
+      const currentNode = queue.shift();
+      // eslint-disable-next-line no-restricted-syntax
+      for (const edge of graph.getIncidentEdgesbyId(currentNode.nodeKey)) {
+        if (!edge.nodeEnd.isMarked) {
+          graph.markNodeById(edge.nodeEnd.nodeKey);
+          queue.push(edge.nodeEnd);
+          if (edge.nodeEnd.nodeKey === endingNode.nodeKey) {
+            return completePath;
+          }
+          completePath.push(edge.nodeEnd);
+        }
+      }
+    }
+    return [];
   }
 
   closestReachableUnvisited(graph, shortestPathMap) {
